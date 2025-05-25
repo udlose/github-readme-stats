@@ -5,7 +5,7 @@ import wrap from "word-wrap";
 import { themes } from "../../themes/index.js";
 
 const TRY_AGAIN_LATER = "Please try again later";
-
+const OWNER_AFFILIATIONS = ["OWNER", "COLLABORATOR", "ORGANIZATION_MEMBER"];
 const SECONDARY_ERROR_MESSAGES = {
   MAX_RETRY:
     "You can deploy own instance or wait until public will be no longer limited",
@@ -15,6 +15,9 @@ const SECONDARY_ERROR_MESSAGES = {
   GRAPHQL_ERROR: TRY_AGAIN_LATER,
   GITHUB_REST_API_ERROR: TRY_AGAIN_LATER,
   WAKATIME_USER_NOT_FOUND: "Make sure you have a public WakaTime profile",
+  INVALID_AFFILIATION: `Invalid owner affiliations. Valid values are: ${OWNER_AFFILIATIONS.join(
+    ", ",
+  )}`,
 };
 
 /**
@@ -37,6 +40,7 @@ class CustomError extends Error {
   static GRAPHQL_ERROR = "GRAPHQL_ERROR";
   static GITHUB_REST_API_ERROR = "GITHUB_REST_API_ERROR";
   static WAKATIME_ERROR = "WAKATIME_ERROR";
+  static INVALID_AFFILIATION = "INVALID_AFFILIATION";
 }
 
 /**
@@ -476,38 +480,6 @@ const CONSTANTS = {
   ERROR_CACHE_SECONDS: TEN_MINUTES,
 };
 
-const OWNER_AFFILIATIONS = ["OWNER", "COLLABORATOR", "ORGANIZATION_MEMBER"];
-
-const SECONDARY_ERROR_MESSAGES = {
-  MAX_RETRY:
-    "Please add an env variable called PAT_1 with your github token in vercel",
-  USER_NOT_FOUND: "Make sure the provided username is not an organization",
-  GRAPHQL_ERROR: "Please try again later",
-  INVALID_AFFILIATION: `Invalid owner affiliations. Valid values are: ${OWNER_AFFILIATIONS.join(
-    ", ",
-  )}`,
-};
-
-/**
- * Custom error class to handle custom GRS errors.
- */
-class CustomError extends Error {
-  /**
-   * @param {string} message Error message.
-   * @param {string} type Error type.
-   */
-  constructor(message, type) {
-    super(message);
-    this.type = type;
-    this.secondaryMessage = SECONDARY_ERROR_MESSAGES[type] || type;
-  }
-
-  static MAX_RETRY = "MAX_RETRY";
-  static USER_NOT_FOUND = "USER_NOT_FOUND";
-  static GRAPHQL_ERROR = "GRAPHQL_ERROR";
-  static INVALID_AFFILIATION = "INVALID_AFFILIATION";
-}
-
 /**
  * Missing query parameter class.
  */
@@ -619,7 +591,7 @@ const parseEmojis = (str) => {
 /**
  * Parse owner affiliations.
  *
- * @param {string[]} affiliations
+ * @param {string[]} affiliations List of user affiliations
  * @returns {string[]} Parsed affiliations.
  *
  * @throws {CustomError} If affiliations contains invalid values.

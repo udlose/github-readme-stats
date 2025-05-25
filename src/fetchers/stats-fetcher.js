@@ -110,7 +110,7 @@ const fetcher = (variables, token) => {
  * @param {boolean} variables.includeMergedPullRequests Include merged pull requests.
  * @param {boolean} variables.includeDiscussions Include discussions.
  * @param {boolean} variables.includeDiscussionsAnswers Include discussions answers.
-  * @param {string[]} variables.ownerAffiliations The owner affiliations to filter by. Default: OWNER.
+ * @param {string[]} variables.ownerAffiliations The owner affiliations to filter by. Default: OWNER.
  * @returns {Promise<AxiosResponse>} Axios response.
  *
  * @description This function supports multi-page fetching if the 'FETCH_MULTI_PAGE_STARS' environment variable is set to true.
@@ -119,8 +119,8 @@ const statsFetcher = async ({
   username,
   includeMergedPullRequests,
   includeDiscussions,
-    includeDiscussionsAnswers,
-  ownerAffiliations
+  includeDiscussionsAnswers,
+  ownerAffiliations,
 }) => {
   let stats;
   let hasNextPage = true;
@@ -133,7 +133,7 @@ const statsFetcher = async ({
       includeMergedPullRequests,
       includeDiscussions,
       includeDiscussionsAnswers,
-        ownerAffiliations: ownerAffiliations,
+      ownerAffiliations,
     };
     let res = await retryer(fetcher, variables);
     if (res.data.errors) {
@@ -232,7 +232,7 @@ const fetchStats = async (
   include_merged_pull_requests = false,
   include_discussions = false,
   include_discussions_answers = false,
-    ownerAffiliations = [],
+  ownerAffiliations = [],
 ) => {
   if (!username) {
     throw new MissingParamError(["username"]);
@@ -258,8 +258,8 @@ const fetchStats = async (
     username,
     includeMergedPullRequests: include_merged_pull_requests,
     includeDiscussions: include_discussions,
-      includeDiscussionsAnswers: include_discussions_answers,
-      ownerAffiliations: ownerAffiliations
+    includeDiscussionsAnswers: include_discussions_answers,
+    ownerAffiliations,
   });
 
   // Catch GraphQL errors.
